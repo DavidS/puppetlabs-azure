@@ -3,4 +3,15 @@ azure_vm { '{{name}}':
   {{#optional}}
   {{k}}   => '{{v}}',
   {{/optional}}
+  {{#optional_extensions}}
+  extensions => [
+    {{#extensions}}
+    {
+      {{#values}}
+      {{k}}   => '{{v}}',
+      {{/values}}
+    },
+    {{/extensions}}
+  ],
+  {{/optional_extensions}}
 }

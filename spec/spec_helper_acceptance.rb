@@ -106,7 +106,7 @@ RSpec.configure do |c|
 end
 
 class PuppetManifest < Mustache
-  attr_accessor :optional_endpoints, :endpoints
+  attr_accessor :optional_endpoints, :endpoints, :optional_extensions, :extensions
 
   def initialize(file, config) # rubocop:disable Metrics/AbcSize
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
@@ -116,6 +116,10 @@ class PuppetManifest < Mustache
 
     endpoints = config.delete(:endpoints)
     @optional_endpoints = endpoints.is_a?(Array) and !endpoints.empty?
+
+    extensions = config.delete(:extensions)
+    @optional_extensions = extensions.is_a?(Array) and !extensions.empty?
+
     if @optional_endpoints
       @endpoints = endpoints.collect do |ep|
         lb = ep.delete(:load_balancer)
@@ -418,7 +422,7 @@ def puppet_resource_should_show(property_name, value=nil)
     # and naively picks the key from @config if it exists. This is because
     # @config is only available in the context of a test, and not in the context
     # of describe or context
-    real_value = @config[:optional][property_name.to_sym] || value
+    real_value =  value || @config[:optional][property_name.to_sym]
     regex = if real_value.nil?
               /(#{property_name})(\s*)(=>)(\s*)/
             else
